@@ -23,7 +23,8 @@ public class ProductJdbcRepository implements ProductRepository {
 
     @Override
     public List<Product> findAll() {
-        return jdbcTemplate.query("select * from products", productRowMapper);
+        return jdbcTemplate.query(
+                "select * from products", productRowMapper);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class ProductJdbcRepository implements ProductRepository {
     public Product update(Product product) {
         var update = jdbcTemplate.update(
                 "UPDATE products SET product_name = :productName, category = :category, price = :price, description = :description, created_at = :createdAt, updated_at = :updatedAt"
-                        +" where product_id = rpad(UNHEX(REPLACE(:productId, '-', '')), 255, '\0')",
+                        +" where product_id = UNHEX(REPLACE(:productId, '-', ''))",
                 toParamMap(product)
         );
         if(update != 1){
@@ -53,12 +54,12 @@ public class ProductJdbcRepository implements ProductRepository {
 
     @Override
     public Optional<Product> findById(UUID productId) {
-        try{
+        try {
             return Optional.ofNullable(
-                    jdbcTemplate.queryForObject("SELECT * FROM products WHERE product_id = rpad(unhex(replace(:productId,'-','')), 255, '\0')",
+                    jdbcTemplate.queryForObject("SELECT * FROM products WHERE product_id = UNHEX(REPLACE(:productId, '-', ''))",
                             Collections.singletonMap("productId", productId.toString().getBytes()), productRowMapper)
-                    );
-        } catch(EmptyResultDataAccessException e) {
+            );
+        } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }

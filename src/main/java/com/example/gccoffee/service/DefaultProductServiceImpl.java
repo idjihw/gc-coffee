@@ -21,12 +21,12 @@ public class DefaultProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getProductsByCategory(Category category) {
-        return null;
+        return productRepository.findByCategory(category);
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return null;
+        return productRepository.findAll();
     }
 
     @Override
